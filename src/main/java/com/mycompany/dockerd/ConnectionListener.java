@@ -18,9 +18,8 @@ public class ConnectionListener{
         this.ports = ports;
     }
 
-    void run() {
+    public void run() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
 }
