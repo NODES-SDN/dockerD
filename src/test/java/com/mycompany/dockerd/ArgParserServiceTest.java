@@ -5,6 +5,7 @@
  */
 package com.mycompany.dockerd;
 
+import java.io.File;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -20,23 +21,23 @@ import static org.mockito.Mockito.*;
  *
  * @author laursuom
  */
-public class DockerDTest {
-    
-    public DockerDTest() {
+public class ArgParserServiceTest {
+
+    public ArgParserServiceTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -46,12 +47,21 @@ public class DockerDTest {
      */
     @Test
     public void testWithFile() {
-        System.out.println("main");
-        String[] args = {"testdata.txt"};
-        ArgumentCaptor<ConnectionListener> arguments = ArgumentCaptor.forClass(ConnectionListener.class);
-        //Mockito.when(DockerD.main(args));
-        
-        // TODO review the generated test code and remove the default call to fail.
+        File file = new File("src/test/java//com/mycompany/dockerd/testdata.txt");
+        ArrayList<Integer> ports = ArgParserService.parsePortsFromFile(file);
+        assertEquals(666, (int) ports.get(0));
+        assertEquals(813, (int) ports.get(1));
+        assertEquals(80, (int) ports.get(2));
+
     }
-    
+
+    @Test
+    public void testWithArgList() {
+        String[] args = {"666","813","80"};
+        ArrayList<Integer> ports = ArgParserService.parsePortsFromArgumentList(args);
+        assertEquals(666, (int) ports.get(0));
+        assertEquals(813, (int) ports.get(1));
+        assertEquals(80, (int) ports.get(2));
+
+    }
 }
