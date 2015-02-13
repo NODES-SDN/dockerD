@@ -23,20 +23,18 @@ public class DockerD {
     
     public static void main(String[] args) {
         
-        ArrayList<Integer> ports;
+        int port;
         if (args.length == 0) {
-            System.out.println("Usage: Pass either a file with port numbers or the port numbers themselves as"
-                    + "arguments");
+            System.err.println("Usage: DockerD <pornumber>");
             System.exit(0);
         } else {
-            File portFile = new File(args[0]);
-            if (portFile.exists()) {
-                ports = ArgParserService.parsePortsFromFile(portFile);
-            } else {
-                ports = ArgParserService.parsePortsFromArgumentList(args);
-           }
-           
-             ConnectionListener listener = new ConnectionListener(ports); 
+//            File portFile = new File(args[0]);
+//            if (portFile.exists()) {
+//                ports = ArgParserService.parsePortsFromFile(portFile);
+//            } else {
+//                ports = ArgParserService.parsePortsFromArgumentList(args);
+//           }
+             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0])); 
              listener.run();
         }
 
