@@ -21,7 +21,7 @@ public class DockerD {
      * @param args the command line arguments
      */
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
         
         int port;
         if (args.length == 0) {
@@ -34,7 +34,7 @@ public class DockerD {
 //            } else {
 //                ports = ArgParserService.parsePortsFromArgumentList(args);
 //           }
-             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0])); 
+             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0]), new DefaultCommands()); 
              listener.run();
         }
 
