@@ -28,7 +28,7 @@ class UbuntuContainer extends Container {
     @Override
     public void run() {
         out.println("Hiyo! UbuntuContainer was called!\n");
-        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-ia", "STDIN", "-a", "STDOUT", "ubuntu", "/bin/bash");
+        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-it", "ubuntu", "/bin/bash");
         pb.redirectErrorStream(true);
 
         try {
@@ -53,6 +53,7 @@ class UbuntuContainer extends Container {
             while (true) {
                 try {
                     message = in.readLine();
+                    System.out.println(message);
                     output.write(message);
                 } catch (IOException ex) {
                     Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,6 +73,7 @@ class UbuntuContainer extends Container {
         public void run() {
             try {
                 message = input.readLine();
+                System.out.println(message);
                 out.print(message);
             } catch (IOException ex) {
                 Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);

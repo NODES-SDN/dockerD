@@ -27,7 +27,7 @@ public class DockerD {
         
         int port;
         if (args.length == 0) {
-            System.err.println("Usage: DockerD <pornumber>");
+            System.err.println("Usage: DockerD <portnumber>");
             System.exit(0);
         } else {
 //            File portFile = new File(args[0]);
