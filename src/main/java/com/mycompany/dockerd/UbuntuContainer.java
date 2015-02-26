@@ -19,20 +19,23 @@ import java.util.logging.Logger;
 class UbuntuContainer extends Container {
 
     Process p;
-
+             
     public UbuntuContainer() {
     }
 
     @Override
     public void run() {
         out.println("Hiyo! UbuntuContainer was called!\n");
-        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-i", "-a", "STDIN", "-a", "STDOUT",  "ubuntu", "/bin/bash");
+        //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
+//        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-i" , "-a", "stdin", "-a", "stdout", "ubuntu", "/bin/bash", "<", "/dev/tty");
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
+        pb.redirectErrorStream(true);
         try {
-            p = pb.start();
+            
 
+            p = pb.start();
             new Thread(new containerWriter()).start();
             new Thread(new containerReader()).start();
-
             p.waitFor();
         
         } catch (IOException | InterruptedException ex) {
@@ -55,6 +58,7 @@ class UbuntuContainer extends Container {
                     output.write(message);
                     output.flush();
                 }
+                output.close();
             } catch (IOException ex) {
                 Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -76,7 +80,7 @@ class UbuntuContainer extends Container {
                     out.print(message);
                     out.flush();
                     }
-                System.out.println("Message was" + message);
+                System.out.println("Message was " + message);
                 input.close();
             } catch (IOException ex) {
                 Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
