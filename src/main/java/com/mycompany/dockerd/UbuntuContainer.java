@@ -5,8 +5,6 @@ package com.mycompany.dockerd;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,16 +26,15 @@ class UbuntuContainer extends Container {
     @Override
     public void run() {
         out.println("Hiyo! UbuntuContainer was called!\n");
-        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-it", "ubuntu", "/bin/bash");
-        pb.redirectErrorStream(true);
-
+        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-i", "-a", "STDIN", "-a", "STDOUT",  "ubuntu", "/bin/bash");
         try {
             p = pb.start();
 
-            while (true) {
-                new Thread (new containerWriter()).start(); 
-                new Thread (new containerReader()).start();
-            }
+            new Thread(new containerWriter()).start();
+            new Thread(new containerReader()).start();
+
+            while (!in.readLine().contains("stop")) {
+            };
         } catch (IOException ex) {
             Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -46,22 +43,23 @@ class UbuntuContainer extends Container {
 
     private class containerWriter implements Runnable {
 
+        PrintWriter output = new PrintWriter(p.getOutputStream(), true);
+        String message;
+
         @Override
         public void run() {
-            PrintWriter output = new PrintWriter(p.getOutputStream(), true);
-            String message;
-            while (true) {
-                try {
-                    message = in.readLine();
+            output.flush();
+            try {
+                while ((message = in.readLine()) != null) {
                     System.out.println(message);
                     output.write(message);
-                } catch (IOException ex) {
-                    Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+                    output.flush();
                 }
-
+            } catch (IOException ex) {
+                Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
 
+        }
     }
 
     private class containerReader implements Runnable {
@@ -71,10 +69,14 @@ class UbuntuContainer extends Container {
 
         @Override
         public void run() {
+            out.flush();
             try {
-                message = input.readLine();
-                System.out.println(message);
-                out.print(message);
+                while ((message = input.readLine()) != null) {
+                    System.out.println(message);
+                    out.print(message);
+                    out.flush();
+                    }
+                
             } catch (IOException ex) {
                 Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
             }
