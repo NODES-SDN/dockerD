@@ -33,9 +33,9 @@ class UbuntuContainer extends Container {
             new Thread(new containerWriter()).start();
             new Thread(new containerReader()).start();
 
-            while (!in.readLine().contains("stop")) {
-            };
-        } catch (IOException ex) {
+            p.waitFor();
+        
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -76,7 +76,8 @@ class UbuntuContainer extends Container {
                     out.print(message);
                     out.flush();
                     }
-                
+                System.out.println("Message was" + message);
+                input.close();
             } catch (IOException ex) {
                 Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
             }
