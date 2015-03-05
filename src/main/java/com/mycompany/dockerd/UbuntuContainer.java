@@ -1,14 +1,20 @@
-package com.mycompany.dockerd;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+package com.mycompany.dockerd;
+
+import com.spotify.docker.client.*;
+import com.spotify.docker.client.messages.ContainerConfig;
+import com.spotify.docker.client.messages.ContainerCreation;
+import com.spotify.docker.client.messages.ContainerInfo;
+import com.spotify.docker.client.messages.HostConfig;
+import com.spotify.docker.client.messages.PortBinding;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,77 +22,56 @@ import java.util.logging.Logger;
  *
  * @author laursuom
  */
-class UbuntuContainer extends Container {
-
-    Process p;
-             
-    public UbuntuContainer() {
-    }
+public class UbuntuContainer extends Container {
+    private Object docker;
 
     @Override
-    public void run() {
-        out.println("Hiyo! UbuntuContainer was called!\n");
-        //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
-//        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-i" , "-a", "stdin", "-a", "stdout", "ubuntu", "/bin/bash", "<", "/dev/tty");
-        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
-        pb.redirectErrorStream(true);
-        try {
-            
+    void run() {
 
-            p = pb.start();
-            new Thread(new containerWriter()).start();
-            new Thread(new containerReader()).start();
-            p.waitFor();
-        
-        } catch (IOException | InterruptedException ex) {
+        try {
+
+          final  DockerClient docker = DefaultDockerClient.fromEnv().build();
+            docker.pull("ubuntu");
+            final String[] ports = {"80"
+            , "22"};
+            final ContainerConfig config = ContainerConfig.builder()
+                    .image("ubuntu").exposedPorts(ports)
+                    .cmd("sh", "-c", "while :; do sleep 1; done")
+                    .build();
+
+// bind container ports to host ports
+            final Map<String, List<PortBinding>> portBindings = new HashMap<String, List<PortBinding>>();
+            for (String port : ports) {
+                List<PortBinding> hostPorts = new ArrayList<PortBinding>();
+                hostPorts.add(PortBinding.of("0.0.0.0", port));
+                portBindings.put(port, hostPorts);
+            }
+            final HostConfig hostConfig = HostConfig.builder().portBindings(portBindings).build();
+
+            final ContainerCreation creation = docker.createContainer(config);
+            final String id = creation.id();
+
+// Inspect container
+            final ContainerInfo info = docker.inspectContainer(id);
+
+// Start container
+            docker.startContainer(id, hostConfig);
+
+// Exec command inside running container with attached STDOUT and STDERR
+            final String[] command = {"bash", "-c", "ls"};
+            final String execId = docker.execCreate(id, command, DockerClient.ExecParameter.STDOUT, DockerClient.ExecParameter.STDERR);
+            final LogStream output = docker.execStart(execId);
+            final String execOutput = output.readFully();
+
+// Kill container
+            docker.killContainer(id);
+
+// Remove container
+            docker.removeContainer(id);
+        } catch (DockerException | DockerCertificateException | InterruptedException ex) {
             Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private class containerWriter implements Runnable {
-
-        PrintWriter output = new PrintWriter(p.getOutputStream(), true);
-        String message;
-
-        @Override
-        public void run() {
-            output.flush();
-            try {
-                while ((message = in.readLine()) != null) {
-                    System.out.println(message);
-                    output.write(message);
-                    output.flush();
-                }
-                output.close();
-            } catch (IOException ex) {
-                Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-    }
-
-    private class containerReader implements Runnable {
-
-        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String message;
-
-        @Override
-        public void run() {
-            out.flush();
-            try {
-                while ((message = input.readLine()) != null) {
-                    System.out.println(message);
-                    out.print(message);
-                    out.flush();
-                    }
-                System.out.println("Message was " + message);
-                input.close();
-            } catch (IOException ex) {
-                Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
-    }
 }
