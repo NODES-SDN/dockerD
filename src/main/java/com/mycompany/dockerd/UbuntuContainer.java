@@ -23,14 +23,15 @@ import java.util.logging.Logger;
  * @author laursuom
  */
 public class UbuntuContainer extends Container {
-    private Object docker;
+    
 
     @Override
     void run() {
 
         try {
 
-          final  DockerClient docker = DefaultDockerClient.fromEnv().build();
+            
+            final  DockerClient docker  = DefaultDockerClient.fromEnv().build();
             docker.pull("ubuntu");
             final String[] ports = {"80"
             , "22"};
@@ -62,13 +63,16 @@ public class UbuntuContainer extends Container {
             final String execId = docker.execCreate(id, command, DockerClient.ExecParameter.STDOUT, DockerClient.ExecParameter.STDERR);
             final LogStream output = docker.execStart(execId);
             final String execOutput = output.readFully();
+            System.out.println(execOutput);
 
 // Kill container
             docker.killContainer(id);
 
 // Remove container
             docker.removeContainer(id);
-        } catch (DockerException | DockerCertificateException | InterruptedException ex) {
+        } catch (DockerException | InterruptedException ex) {
+            Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DockerCertificateException ex) {
             Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
