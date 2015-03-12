@@ -30,7 +30,7 @@ class OldUbuntuContainer extends Container {
     public void run() {
         out.println("Hiyo! UbuntuContainer was called!\n");
         //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
-        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-i", "-a", "stdout", "-a", "stdin", "ubuntu", "/bin/bash");
+        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-a", "stdout", "-a", "stdin", "ubuntu", "ls");
         //   ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
         pb.redirectErrorStream(true);
         try {
@@ -86,7 +86,7 @@ class OldUbuntuContainer extends Container {
                     message = input.readLine();
                     if (message != null) {
                         System.out.println(message);
-                        out.print(message);
+                        out.println(message);
                         out.flush();
                     }
                 }

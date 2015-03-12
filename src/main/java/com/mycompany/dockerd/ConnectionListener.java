@@ -46,6 +46,8 @@ public class ConnectionListener {
                     temp.setWriter(out);
                     containers.add(temp);
                     containers.get(0).run();
+                    System.out.println("The id of the container:");
+                    System.out.println(containers.get(0).id);
                     } else {
                     out.println(listCommands());
                 }              

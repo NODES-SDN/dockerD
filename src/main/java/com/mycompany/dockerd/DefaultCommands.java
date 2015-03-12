@@ -20,7 +20,7 @@ public class DefaultCommands extends ContainerCommandFactory {
     @Override
     public HashMap makeCommands() {
         HashMap<String, Class> tempMap = new HashMap();
-        Class ubuntu = OldUbuntuContainer.class;
+        Class ubuntu = NewUbuntuContainer.class;
         tempMap.put("ubuntu", ubuntu);
         return tempMap;
     }

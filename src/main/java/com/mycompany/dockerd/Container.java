@@ -18,6 +18,7 @@ public abstract class Container {
     
     PrintWriter out;
     BufferedReader in;
+    String id;
     
     abstract void run();
     public void setWriter(PrintWriter out) {this.out = out;}
