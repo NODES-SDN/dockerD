@@ -48,7 +48,10 @@ public class ConnectionListener {
                     containers.get(0).run();
                     System.out.println("The id of the container:");
                     System.out.println(containers.get(0).id);
-                    } else {
+                    System.out.println("The IP:");
+                    System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress",containers.get(0).id));
+                    System.out.println(ContainerCommander.inspect(containers.get(0).id));
+                } else {
                     out.println(listCommands());
                 }              
             }
