@@ -23,4 +23,5 @@ public abstract class Container {
     abstract void run();
     public void setWriter(PrintWriter out) {this.out = out;}
     public void setReader(BufferedReader in) {this.in = in;}
+    
 }

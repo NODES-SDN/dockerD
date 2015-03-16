@@ -59,4 +59,17 @@ public class ContainerCommander {
         return string.toString();
     }
 
-}
+    static String exec(String id, String command) {
+        ProcessBuilder pb = new ProcessBuilder("docker", "exec", id, command);
+        try {
+            Process p = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            return reader.readLine();
+        } catch (IOException ex) {
+            Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    }
+
+
