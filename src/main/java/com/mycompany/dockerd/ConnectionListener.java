@@ -8,7 +8,6 @@ package com.mycompany.dockerd;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -22,7 +21,6 @@ public class ConnectionListener {
 
     int port;
     HashMap<String, Class> commands = new HashMap();
-    HashMap<String, Container> containers = new HashMap();
 
     public ConnectionListener(int port, ContainerCommandFactory commandFactory) {
         this.port = port;
@@ -38,7 +36,7 @@ public class ConnectionListener {
                 Socket clientSocket = serverSocket.accept();
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                new Thread(new UI(out, in, serverSocket)).start();
+                new Thread(new UI(out, in, clientSocket)).start();
             }
 
         } catch (IOException ex) {
@@ -50,12 +48,13 @@ public class ConnectionListener {
 
         PrintWriter out;
         BufferedReader in;
-        ServerSocket serverSocket;
+        Socket ClientSocket;
+        private HashMap<String, Container> containers = new HashMap();
 
-        private UI(PrintWriter out, BufferedReader in, ServerSocket serverSocket) {
+        private UI(PrintWriter out, BufferedReader in, Socket clientSocket) {
             this.out = out;
             this.in = in;
-            this.serverSocket = serverSocket;
+            this.ClientSocket= clientSocket;
 
         }
 
@@ -66,41 +65,47 @@ public class ConnectionListener {
                 while (true) {
                     out.println("Please write the name of the docker container you wish to launch");
                     StringTokenizer message = new StringTokenizer(in.readLine());
-                    String first = message.nextToken();
-                    if (commands.containsKey(first)) {
-                        Container temp = ContainerCommandFactory.makeANewContainer(commands.get(first).getName());
-                        temp.setReader(in);
-                        temp.setWriter(out);
-                        temp.run();
-                        containers.put(temp.id, temp);
-                    } else if (first.equals("inspect")) {
-                        if (message.countTokens() == 3) {
-                            ContainerCommander.getContainerFieldValue(message.nextToken(), message.nextToken());
-                        } else if (message.countTokens() == 2) {
-                            ContainerCommander.inspect(message.nextToken());
+                    if (message.hasMoreElements()) {
+                        String first = message.nextToken();
+                        if (commands.containsKey(first)) {
+                            Container temp = ContainerCommandFactory.makeANewContainer(commands.get(first).getName());
+                            temp.setReader(in);
+                            temp.setWriter(out);
+                            temp.run();
+                            containers.put(temp.id, temp);
+                        } else if (first.equals("inspect")) {
+                            if (message.countTokens() == 2) {
+                                ContainerCommander.getContainerFieldValue(message.nextToken(), message.nextToken(), out);
+                            } else if (message.countTokens() == 1) {
+                                ContainerCommander.inspect(message.nextToken(), out);
+                            } else {
+                                out.println(listCommands());
+                            }
+                        } else if (first.equals("exec")) {
+                            if (message.countTokens() == 1) {
+                                ContainerCommander.exec(message.nextToken(), message.nextToken(), out);
+                            } else {
+                                out.println(listCommands());
+                            }
+                        } else if (first.equals("list")) {
+                            ContainerCommander.list(out);
                         } else {
                             out.println(listCommands());
                         }
-                    } else if (first.equals("exec")) {
-                        if (message.countTokens() == 3) {
-                            ContainerCommander.exec(message.nextToken(), message.nextToken());
-                        } else {
-                            out.println(listCommands());
-                        }
-                    } else {
-                        out.println(listCommands());
                     }
                 }
             } catch (NullPointerException np) {
                 System.out.println("Client has disconnected");
                 try {
-                    serverSocket.close();
+                    ClientSocket.close();
+                    out.close();
+                    in.close();
                 } catch (IOException e) {
                     System.out.println("Error when closing the socket");
                 }
             } catch (IOException ex) {
-               System.err.println("U dun goofed sonny! (Really should get a better error message...)");
-                    System.err.println(ex.getMessage());
+                System.err.println("U dun goofed sonny! (Really should get a better error message...)");
+                System.err.println(ex.getMessage());
             }
         }
 
@@ -112,6 +117,7 @@ public class ConnectionListener {
             }
             string.append("inspect (field) <container id> \n");
             string.append("exec <container id> <command> \n");
+            string.append("list");
             return string.toString();
         }
     }

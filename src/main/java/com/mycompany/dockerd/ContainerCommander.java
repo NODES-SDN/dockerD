@@ -3,7 +3,8 @@ package com.mycompany.dockerd;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
+import java.io.PrintWriter;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,12 +22,14 @@ public class ContainerCommander {
     /*
      Returns the requested container value as a string using 'docker inspect'.
      */
-    public static String getContainerFieldValue(String field, String id) {
+    public static String getContainerFieldValue(String field, String id, PrintWriter out) {
         ProcessBuilder pb = new ProcessBuilder("docker", "inspect", "--format", "'{{" + field + "}}'", id);
         try {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            return reader.readLine();
+            String string = reader.readLine();
+            out.write(string);
+            return string;
         } catch (IOException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -36,7 +39,7 @@ public class ContainerCommander {
     /*
      Returns all the container values as Json using 'docker inspect'.
      */
-    public static String inspect(String id) {
+    public static String inspect(String id,PrintWriter out) {
 
         StringBuilder string = new StringBuilder();
         ProcessBuilder pb = new ProcessBuilder("docker", "inspect", id);
@@ -56,19 +59,47 @@ public class ContainerCommander {
         } catch (IOException | IllegalArgumentException | SecurityException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
         }
+        out.write(string.toString());
         return string.toString();
     }
 
-    static String exec(String id, String command) {
+    static String exec(String id, String command, PrintWriter out) {
         ProcessBuilder pb = new ProcessBuilder("docker", "exec", id, command);
         try {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            return reader.readLine();
+            String string = reader.readLine();
+            out.write(string);
+            return string;
         } catch (IOException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public static String list(PrintWriter out) {
+
+        StringBuilder string = new StringBuilder();
+        ProcessBuilder pb = new ProcessBuilder("docker", "ps");
+        try {
+            Process p = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String tmp;
+
+            while (true) {
+                tmp = reader.readLine();
+                if (tmp == null) {
+                    break;
+                } else {
+                    string.append(tmp).append("\n");
+                }
+            }
+        } catch (IOException | IllegalArgumentException | SecurityException ex) {
+            Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println(string.toString());
+        out.write(string.toString());
+        return string.toString();
     }
     }
 
