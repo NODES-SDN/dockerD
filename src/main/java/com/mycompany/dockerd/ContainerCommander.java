@@ -65,16 +65,25 @@ public class ContainerCommander {
 
     static String exec(String id, String command, PrintWriter out) {
         ProcessBuilder pb = new ProcessBuilder("docker", "exec", id, command);
+        StringBuilder string = new StringBuilder();
         try {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String string = reader.readLine();
-            out.write(string);
-            return string;
+           String tmp;
+
+            while (true) {
+                tmp = reader.readLine();
+                if (tmp == null) {
+                    break;
+                } else {
+                    string.append(tmp).append("\n");
+                }
+            }
         } catch (IOException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        out.write(string.toString());
+        return string.toString();
     }
     
     public static String list(PrintWriter out) {

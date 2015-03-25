@@ -82,7 +82,7 @@ public class ConnectionListener {
                                 out.println(listCommands());
                             }
                         } else if (first.equals("exec")) {
-                            if (message.countTokens() == 1) {
+                            if (message.countTokens() == 2) {
                                 ContainerCommander.exec(message.nextToken(), message.nextToken(), out);
                             } else {
                                 out.println(listCommands());

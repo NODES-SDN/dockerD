@@ -22,6 +22,7 @@ public class DefaultCommands extends ContainerCommandFactory {
         HashMap<String, Class> tempMap = new HashMap();
         Class ubuntu = NewUbuntuContainer.class;
         tempMap.put("ubuntu", ubuntu);
+        tempMap.put("snort", snortContainer.class);
         return tempMap;
     }
 }

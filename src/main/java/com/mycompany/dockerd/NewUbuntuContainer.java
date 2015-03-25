@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 class NewUbuntuContainer extends Container {
 
     Process p;
+    String PORT = "5000";
 
     public NewUbuntuContainer() {
         id = "";
@@ -30,7 +31,7 @@ class NewUbuntuContainer extends Container {
     public void run() {
         out.println("Hiyo! UbuntuContainer was called!\n");
         //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
-        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-id", "ubuntu", "/bin/bash");
+        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-id", "-p", PORT, "ubuntu", "/bin/bash");
         //   ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
         pb.redirectErrorStream(true);
         try {
