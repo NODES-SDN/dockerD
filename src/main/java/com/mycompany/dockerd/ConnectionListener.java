@@ -63,7 +63,7 @@ public class ConnectionListener {
 
             try {
                 while (true) {
-                    out.println("Please write the name of the docker container you wish to launch");
+               //     out.println("Please write the name of the docker container you wish to launch");
                     StringTokenizer message = new StringTokenizer(in.readLine());
                     if (message.hasMoreElements()) {
                         String first = message.nextToken();

@@ -39,8 +39,9 @@ public class dumbServerContainer extends Container{
             message = input.readLine();
             id = message;
             System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
+            out.write(",");
             System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", id, out));
-            
+            out.flush();
 
         } catch (IOException | SecurityException ex) {
             Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
