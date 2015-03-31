@@ -23,6 +23,7 @@ public class DefaultCommands extends ContainerCommandFactory {
         Class ubuntu = NewUbuntuContainer.class;
         tempMap.put("ubuntu", ubuntu);
         tempMap.put("snort", snortContainer.class);
+        tempMap.put("dumbserver", dumbServerContainer.class);
         return tempMap;
     }
 }

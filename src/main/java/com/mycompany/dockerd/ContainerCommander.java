@@ -28,7 +28,7 @@ public class ContainerCommander {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String string = reader.readLine();
-            out.write(string);
+            out.write(string + "\n");
             return string;
         } catch (IOException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
