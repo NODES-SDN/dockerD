@@ -1,0 +1,9 @@
+cloudIP=128.214.10.134
+cloudPortNumber=16001
+srcIPblocklist=/home/hafeez/SrcIPAddresses
+destIPblocklist=/home/hafeez/DestIPAddresses
+srcMACblocklist=/home/hafeez/SrcMacAddresses
+destMACblocklist=/home/hafeez/DestMacAddresses
+policyFileName=/home/hafeez/policies
+connectionLimit=10
+defaultDecisionServerPort=15001

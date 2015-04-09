@@ -1,5 +1,8 @@
 FROM centos
 MAINTAINER Fleuri - lauri.suomalainen@cs.helsinki.fi
 RUN yum install -y java-1.7.0-openjdk
-ADD dummydecision.jar /
-ENTRYPOINT ["java", "-jar", "/dummydecision.jar"]
+ADD decisionServer_latest.jar /
+ADD configurationFile /root/
+# CMD [ "chmod", "a+rwx", "configurationFile" ]
+# CMD [ "mv", "configurationFile", "~/" ]
+ENTRYPOINT [ "java", "-jar", "decisionServer_latest.jar", "15001", "3" ]
