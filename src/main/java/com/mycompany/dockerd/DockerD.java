@@ -34,6 +34,7 @@ public class DockerD {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
+                    System.out.println("Cloud Manager interrupted. Shutting down all the containers.");
                     String[] cmd = {
                         "/bin/sh",
                         "-c",
@@ -41,8 +42,9 @@ public class DockerD {
                     };
 
                     try {
+                        sleep(2);
                         Runtime.getRuntime().exec(cmd);
-                    } catch (IOException ex) {
+                    } catch (IOException | InterruptedException ex) {
                         Logger.getLogger(DockerD.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

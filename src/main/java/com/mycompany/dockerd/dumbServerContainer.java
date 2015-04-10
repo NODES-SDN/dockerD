@@ -26,7 +26,7 @@ public class dumbServerContainer extends Container{
 
     @Override
     public void run() {
-        System.out.println("Hiyo! dumbServerContainer was called!\n");
+        System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
         //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
         ProcessBuilder pb = new ProcessBuilder("docker", "run", "-d", "-p", PORT, "fleuri/dumbserver");
         //   ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
