@@ -44,11 +44,13 @@ public class dumbServerContainer extends Container {
             try {
 
                 p = pb.start();
+                
                 BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String message;
                 message = input.readLine();
                 id = message;
                 singletonId = message;
+                new Thread(new openToTerminal(id)).start();
                 System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
                 out.write(",");
                 System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", id, out));
@@ -60,6 +62,26 @@ public class dumbServerContainer extends Container {
             }
         }
 
+    }
+
+    private static class openToTerminal implements Runnable {
+        
+        String id;
+        
+        public openToTerminal(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+             try {
+            Runtime.getRuntime().exec("/usr/bin/xterm -e docker attach " + id).waitFor();
+        } catch (IOException ex) {
+            Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            System.err.println("Xterm interrupted");
+        }
+        }
     }
 
 }

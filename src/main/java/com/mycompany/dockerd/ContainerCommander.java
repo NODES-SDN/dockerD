@@ -109,6 +109,7 @@ public class ContainerCommander {
         }
         System.out.println(string.toString());
         out.write(string.toString());
+        out.println();
         return string.toString();
     }
     }
