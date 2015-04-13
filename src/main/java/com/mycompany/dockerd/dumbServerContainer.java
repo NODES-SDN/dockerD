@@ -15,8 +15,9 @@ import java.util.logging.Logger;
  *
  * @author laursuom
  */
-public class dumbServerContainer extends Container{
+public class dumbServerContainer extends Container {
 
+    public static String singletonId = null;
     Process p;
     String PORT = "15001:15001/tcp";
 
@@ -26,27 +27,37 @@ public class dumbServerContainer extends Container{
 
     @Override
     public void run() {
-        System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
-        //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
-        ProcessBuilder pb = new ProcessBuilder("docker", "run", "-d", "-p", PORT, "fleuri/dumbserver");
-        //   ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
-        pb.redirectErrorStream(true);
-        try {
 
-            p = pb.start();
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String message;
-            message = input.readLine();
-            id = message;
-            System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
+        if (singletonId != null) {
+            System.out.println("Called the already running Decision Server!");
+            System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", singletonId, out));
             out.write(",");
-            System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", id, out));
+            System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", singletonId, out));
             out.flush();
+        } else {
+            System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
+            //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
+            ProcessBuilder pb = new ProcessBuilder("docker", "run", "-d", "-p", PORT, "fleuri/dumbserver");
+            //   ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
+            pb.redirectErrorStream(true);
+            try {
 
-        } catch (IOException | SecurityException ex) {
-            Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+                p = pb.start();
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String message;
+                message = input.readLine();
+                id = message;
+                singletonId = message;
+                System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
+                out.write(",");
+                System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", id, out));
+                out.flush();
+
+            } catch (IOException | SecurityException ex) {
+                Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }
-    
+
 }
