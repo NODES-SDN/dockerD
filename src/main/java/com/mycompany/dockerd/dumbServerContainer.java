@@ -33,6 +33,7 @@ public class dumbServerContainer extends Container {
             System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", singletonId, out));
             out.write(",");
             System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", singletonId, out));
+            out.println();
             out.flush();
         } else {
             System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
@@ -51,6 +52,7 @@ public class dumbServerContainer extends Container {
                 System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
                 out.write(",");
                 System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", id, out));
+                out.println();
                 out.flush();
 
             } catch (IOException | SecurityException ex) {
