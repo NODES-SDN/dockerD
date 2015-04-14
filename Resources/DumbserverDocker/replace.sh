@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ "$#" -ne 3 ]; then
+echo "Usage <Line to replace> <replacement> <File in root>"
+elif [ ! -f /root/$3 ]; then
+    echo "File not found!"
+else
+sed 0,/$1/{s/$1/$2/} /root/$3 > /root/tmp
+cat /root/tmp > /root/$3
+fi

@@ -2,8 +2,8 @@
 
 if [ "$#" -ne 2 ]; then
 echo "Usage <Line to add> <File in root>"
-elif [ ! -f $2 ]; then
+elif [ ! -f /root/$2 ]; then
     echo "File not found!"
 else
-echo $1 > $2
+echo $1 > /root/$2
 fi
