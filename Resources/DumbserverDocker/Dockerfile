@@ -7,6 +7,13 @@ ADD DestIPAddresses /root/
 ADD DestMacAddresses /root/
 ADD SrcIPAddresses /root/
 ADD SrcMacAddresses /root/
-# CMD [ "chmod", "a+rwx", "configurationFile" ]
+ADD add.sh /root/
+ADD remove.sh /root/ 
+RUN [ "chmod", "a+rwx", "/root/DestIPAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/DestMacAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/SrcIPAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/SrcMacAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/add.sh" ]
+RUN [ "chmod", "a+rwx", "/root/remove.sh" ]
 # CMD [ "mv", "configurationFile", "~/" ]
 ENTRYPOINT [ "java", "-jar", "decisionServer_with_SSL.jar", "15001", "4" ]

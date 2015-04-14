@@ -1,8 +1,15 @@
 FROM centos
 MAINTAINER Fleuri - lauri.suomalainen@cs.helsinki.fi
 RUN yum install -y java-1.7.0-openjdk
-ADD decisionServer_latest.jar /
+ADD decisionServer_with_SSL.jar /
 ADD configurationFile /root/
-# CMD [ "chmod", "a+rwx", "configurationFile" ]
+ADD DestIPAddresses /root/
+ADD DestMacAddresses /root/
+ADD SrcIPAddresses /root/
+ADD SrcMacAddresses /root/
+RUN [ "chmod", "a+rwx", "/root/DestIPAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/DestMacAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/SrcIPAddresses" ]
+RUN [ "chmod", "a+rwx", "/root/SrcMacAddresses" ]
 # CMD [ "mv", "configurationFile", "~/" ]
 ENTRYPOINT [ "java", "-jar", "decisionServer_with_SSL.jar", "15001", "4" ]
