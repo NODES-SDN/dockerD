@@ -38,7 +38,7 @@ public class DockerD {
                     String[] cmd = {
                         "/bin/sh",
                         "-c",
-                        "docker kill $(docker ps -q)"
+                        "docker kill $(docker ps -q) && docker rm server"
                     };
 
                     try {
