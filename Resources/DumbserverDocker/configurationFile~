@@ -1,0 +1,17 @@
+#configuration file
+#Comments
+#cloudIP=193.166.131.123
+#cloudPortNumber=1024
+srcIPblocklist=/home/hafeez/SrcIPAddresses
+destIPblocklist=/home/hafeez/DestIPAddresses
+srcMACblocklist=/home/hafeez/SrcMacAddresses
+destMACblocklist=/home/hafeez/DestMacAddresses
+policyFileName=/home/hafeez/policies
+subnetMask=255.255.255.255
+connectionLimit=10
+defaultDecisionServerPort=15001
+policyWriteInterval=30
+sshConnectionLimit=2
+portScanningCounterTimeout=45
+sshCounterTimeout=30
+ACLLoadInterval=45

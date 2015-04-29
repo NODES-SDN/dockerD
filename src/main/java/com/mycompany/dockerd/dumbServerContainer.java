@@ -30,11 +30,7 @@ public class dumbServerContainer extends Container {
 
         if (singletonId != null) {
             System.out.println("Called the already running Decision Server!");
-            System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", singletonId, out));
-            out.write(",");
-            System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", singletonId, out));
-            out.println();
-            out.flush();
+            sendContainerInfo();
         } else {
             System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
             //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
@@ -44,18 +40,14 @@ public class dumbServerContainer extends Container {
             try {
 
                 p = pb.start();
-                
+
                 BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String message;
                 message = input.readLine();
                 id = message;
                 singletonId = message;
                 new Thread(new openToTerminal(id)).start();
-                System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
-                out.write(",");
-                System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", id, out));
-                out.println();
-                out.flush();
+                sendContainerInfo();
 
             } catch (IOException | SecurityException ex) {
                 Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
@@ -64,23 +56,31 @@ public class dumbServerContainer extends Container {
 
     }
 
+    private void sendContainerInfo() {
+        System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", singletonId, out));
+        out.write(",");
+        System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", singletonId, out));
+        out.println();
+        out.flush();
+    }
+
     private static class openToTerminal implements Runnable {
-        
+
         String id;
-        
+
         public openToTerminal(String id) {
             this.id = id;
         }
 
         @Override
         public void run() {
-             try {
-            Runtime.getRuntime().exec("/usr/bin/xterm -e docker attach " + id).waitFor();
-        } catch (IOException ex) {
-            Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            System.err.println("Xterm interrupted");
-        }
+            try {
+                Runtime.getRuntime().exec("/usr/bin/xterm -e docker attach " + id).waitFor();
+            } catch (IOException ex) {
+                Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
+                System.err.println("Xterm interrupted");
+            }
         }
     }
 
