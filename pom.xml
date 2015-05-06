@@ -17,7 +17,7 @@
           <manifest>
             <addClasspath>true</addClasspath>
             <classpathPrefix>lib/</classpathPrefix>
-            <mainClass>com.mycompany.dockerd.DockerD</mainClass>
+            <mainClass>com.mycompany.dockerd2.DockerD</mainClass>
           </manifest>
         </archive>
       </configuration>
