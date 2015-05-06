@@ -9,11 +9,13 @@ ADD SrcIPAddresses /root/
 ADD SrcMacAddresses /root/
 ADD add.sh /root/
 ADD remove.sh /root/ 
+ADD replace.sh /root/
 RUN [ "chmod", "a+rwx", "/root/DestIPAddresses" ]
 RUN [ "chmod", "a+rwx", "/root/DestMacAddresses" ]
 RUN [ "chmod", "a+rwx", "/root/SrcIPAddresses" ]
 RUN [ "chmod", "a+rwx", "/root/SrcMacAddresses" ]
 RUN [ "chmod", "a+rwx", "/root/add.sh" ]
 RUN [ "chmod", "a+rwx", "/root/remove.sh" ]
+RUN [ "chmod", "a+rwx", "/root/replace.sh" ]
 # CMD [ "mv", "configurationFile", "~/" ]
 ENTRYPOINT [ "java", "-jar", "decisionServer_with_SSL.jar", "15001", "4" ]
