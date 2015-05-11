@@ -36,8 +36,13 @@ public class ConnectionListener {
                 Socket clientSocket = serverSocket.accept();
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                System.out.println("Client connected!");
+                System.out.println("Client connected from address " + clientSocket.getRemoteSocketAddress().toString() + "!");
+                if (DockerD.isOnIPWhitelist(clientSocket.getRemoteSocketAddress().toString())) {
                 new Thread(new UI(out, in, clientSocket)).start();
+                } else {
+                    out.println("Access denied!");
+                    closeClientSocket(out, in, clientSocket);
+                }
             }
 
         } catch (IOException ex) {
@@ -96,19 +101,14 @@ public class ConnectionListener {
                     }
                 }
             } catch (NullPointerException np) {
-                System.out.println("Client has disconnected");
-                try {
-                    ClientSocket.close();
-                    out.close();
-                    in.close();
-                } catch (IOException e) {
-                    System.out.println("Error when closing the socket");
-                }
+                closeClientSocket(out,in, ClientSocket);
             } catch (IOException ex) {
                 System.err.println("U dun goofed sonny! (Really should get a better error message...)");
                 System.err.println(ex.getMessage());
             }
         }
+
+        
 
         private String listCommands() {
             StringBuilder string = new StringBuilder();
@@ -122,4 +122,15 @@ public class ConnectionListener {
             return string.toString();
         }
     }
+    
+    protected void closeClientSocket(PrintWriter out, BufferedReader in, Socket clientSocket) {
+            System.out.println("Client has disconnected");
+            try {
+                clientSocket.close();
+                out.close();
+                in.close();
+            } catch (IOException e) {
+                System.out.println("Error when closing the socket");
+            }
+        }
 }
