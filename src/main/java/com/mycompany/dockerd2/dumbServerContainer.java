@@ -8,6 +8,8 @@ package com.mycompany.dockerd2;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +25,8 @@ public class dumbServerContainer extends Container {
 
     public dumbServerContainer() {
         id = "";
+        time = System.currentTimeMillis();
+        leaseTime = time + MILLISECONDS.convert(5, MINUTES);
     }
 
     @Override
