@@ -54,13 +54,12 @@ public class ConnectionListener {
 
         PrintWriter out;
         BufferedReader in;
-        Socket ClientSocket;
-        private HashMap<String, Container> containers = new HashMap();
+        Socket clientSocket;
 
         private UI(PrintWriter out, BufferedReader in, Socket clientSocket) {
             this.out = out;
             this.in = in;
-            this.ClientSocket= clientSocket;
+            this.clientSocket= clientSocket;
 
         }
 
@@ -78,7 +77,7 @@ public class ConnectionListener {
                             temp.setReader(in);
                             temp.setWriter(out);
                             temp.run();
-                            containers.put(temp.id, temp);
+                            ContainerManager.storeContainer(clientSocket.getRemoteSocketAddress().toString(), temp.id, temp);
                         } else if (first.equals("inspect")) {
                             if (message.countTokens() == 2) {
                                 ContainerCommander.getContainerFieldValue(message.nextToken(), message.nextToken(), out);
@@ -101,7 +100,7 @@ public class ConnectionListener {
                     }
                 }
             } catch (NullPointerException np) {
-                closeClientSocket(out,in, ClientSocket);
+                closeClientSocket(out,in, clientSocket);
             } catch (IOException ex) {
                 System.err.println("U dun goofed sonny! (Really should get a better error message...)");
                 System.err.println(ex.getMessage());

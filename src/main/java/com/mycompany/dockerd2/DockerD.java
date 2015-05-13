@@ -39,6 +39,7 @@ public class DockerD {
         } else {
             cleanContainerNameTags();
             ipWhiteList = readIpWhiteList();
+            new Thread(new ContainerManager()).start();
 //            for (int i = 0; i < ipWhiteList.size(); i++) {
 //                System.out.println(ipWhiteList.get(i));
 //            }

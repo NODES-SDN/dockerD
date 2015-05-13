@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +27,7 @@ public class dumbServerContainer extends Container {
     public dumbServerContainer() {
         id = "";
         time = System.currentTimeMillis();
-        leaseTime = time + MILLISECONDS.convert(5, MINUTES);
+        leaseTime = time + MILLISECONDS.convert(10, SECONDS);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class dumbServerContainer extends Container {
         } else {
             System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
             //ProcessBuilder pb = new ProcessBuilder("/bin/cat", "-");
-            ProcessBuilder pb = new ProcessBuilder("docker", "run", "-d", "--name", "server", "-p", PORT, "fleuri/dumbserver");
+            ProcessBuilder pb = new ProcessBuilder("docker", "run", "-d", "-p", PORT, "fleuri/dumbserver");
             //   ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "docker run -it ubuntu /bin/bash < /dev/tty");
             pb.redirectErrorStream(true);
             try {
