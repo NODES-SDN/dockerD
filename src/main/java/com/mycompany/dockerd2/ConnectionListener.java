@@ -93,7 +93,7 @@ public class ConnectionListener {
                                 out.println(listCommands());
                             }
                         } else if (first.equals("list")) {
-                            ContainerCommander.list(out);
+                            ContainerCommander.list(out, clientSocket.getRemoteSocketAddress().toString());
                         } else {
                             out.println(listCommands());
                         }

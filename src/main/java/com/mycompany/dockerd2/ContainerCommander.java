@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +42,7 @@ public class ContainerCommander {
     /*
      Returns all the container values as Json using 'docker inspect'.
      */
-    public static String inspect(String id,PrintWriter out) {
+    public static String inspect(String id, PrintWriter out) {
 
         StringBuilder string = new StringBuilder();
         ProcessBuilder pb = new ProcessBuilder("docker", "inspect", id);
@@ -70,7 +72,7 @@ public class ContainerCommander {
         try {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-           String tmp;
+            String tmp;
 
             while (true) {
                 tmp = reader.readLine();
@@ -86,11 +88,13 @@ public class ContainerCommander {
         out.write(string.toString());
         return string.toString();
     }
-    
-    public static String list(PrintWriter out) {
 
+    public static String list(PrintWriter out, String ip) {
+
+        String filter = buildFilter(ip);
         StringBuilder string = new StringBuilder();
-        ProcessBuilder pb = new ProcessBuilder("docker", "ps");
+        ProcessBuilder pb = new ProcessBuilder("docker", "ps", "--filter=", "'id=" + filter + "'");
+       
         try {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -112,6 +116,16 @@ public class ContainerCommander {
         out.println();
         return string.toString();
     }
+
+    private static String buildFilter(String ip) {
+        CopyOnWriteArrayList ids = ContainerManager.getIds(ip);
+        Iterator it = ids.iterator();
+        StringBuilder string = new StringBuilder();
+        while (it.hasNext()) {
+            string.append(it.next());
+            string.append("|");
+        }
+        System.out.println(string.substring(0, string.length()-1));
+        return string.substring(0, string.length()-1);
     }
-
-
+}

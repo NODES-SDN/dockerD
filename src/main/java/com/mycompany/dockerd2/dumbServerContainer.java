@@ -8,6 +8,7 @@ package com.mycompany.dockerd2;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -33,7 +34,7 @@ public class dumbServerContainer extends Container {
     @Override
     public void run() {
 
-        if (singletonId != null) {
+        if (p != null && processStillRunning()) {
             System.out.println("Called the already running Decision Server!");
             sendContainerInfo();
         } else {
@@ -67,6 +68,17 @@ public class dumbServerContainer extends Container {
         System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", singletonId, out));
         out.println();
         out.flush();
+    }
+
+    private boolean processStillRunning() {
+        try {
+            Field hasExited = p.getClass().getDeclaredField("hasExited");
+            hasExited.setAccessible(true);
+            return !(Boolean) hasExited.get(p);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex) {
+            Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     private static class openToTerminal implements Runnable {

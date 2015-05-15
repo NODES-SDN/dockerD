@@ -34,6 +34,8 @@ public class ContainerManager implements Runnable {
     
     private static volatile ConcurrentHashMap<String,CopyOnWriteArrayList<String>> clientsIds; 
     private static volatile ConcurrentHashMap <String, Container> idsContainers;
+
+   
     
     public ContainerManager() {
         clientsIds = new ConcurrentHashMap();
@@ -67,6 +69,10 @@ public class ContainerManager implements Runnable {
            idsContainers.put(id, container);
        } 
     
+     public static CopyOnWriteArrayList getIds(String ip) {
+        return clientsIds.get(ip);
+    }
+    
 
     private void shutDownContainer(String id, String client) {
         System.out.println("Lease time for the container " +  id + " has expired! Stopping the container");
@@ -75,8 +81,10 @@ public class ContainerManager implements Runnable {
             pb.start();
             idsContainers.remove(id);
             clientsIds.get(client).remove(id);
-            if (clientsIds.get(client).isEmpty())
+            if (clientsIds.get(client).isEmpty()) {
                 clientsIds.remove(client);
+            }
+            
         } catch (IOException ex) {
             Logger.getLogger(ContainerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
