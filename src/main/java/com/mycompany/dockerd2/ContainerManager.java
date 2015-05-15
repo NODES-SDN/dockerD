@@ -54,7 +54,7 @@ public class ContainerManager implements Runnable {
                 }
             }
             try {
-                sleep(30000);
+                sleep(90000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ContainerManager.class.getName()).log(Level.SEVERE, null, ex);
             }

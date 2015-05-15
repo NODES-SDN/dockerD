@@ -91,30 +91,38 @@ public class ContainerCommander {
 
     public static String list(PrintWriter out, String ip) {
 
-        String filter = buildFilter(ip);
-        StringBuilder string = new StringBuilder();
-        ProcessBuilder pb = new ProcessBuilder("docker", "ps", "--filter=", "'id=" + filter + "'");
-       
-        try {
-            Process p = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String tmp;
+        if (ContainerManager.getIds(ip) != null) {
+            String filter = buildFilter(ip);
+            StringBuilder string = new StringBuilder();
+            ProcessBuilder pb = new ProcessBuilder("docker", "ps", "--filter=", "id='" + filter + "'");
 
-            while (true) {
-                tmp = reader.readLine();
-                if (tmp == null) {
-                    break;
-                } else {
-                    string.append(tmp).append("\n");
+            try {
+                Process p = pb.start();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String tmp;
+
+                while (true) {
+                    tmp = reader.readLine();
+                    if (tmp == null) {
+                        break;
+                    } else {
+                        string.append(tmp).append("\n");
+                    }
                 }
+            } catch (IOException | IllegalArgumentException | SecurityException ex) {
+                Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException | IllegalArgumentException | SecurityException ex) {
-            Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(string.toString());
+            out.write(string.toString());
+            out.println();
+            return string.toString();
+        } else {
+            String string = "No containers found.";
+            out.write(string);
+            out.println();
+            return string;
         }
-        System.out.println(string.toString());
-        out.write(string.toString());
-        out.println();
-        return string.toString();
+
     }
 
     private static String buildFilter(String ip) {
@@ -122,10 +130,10 @@ public class ContainerCommander {
         Iterator it = ids.iterator();
         StringBuilder string = new StringBuilder();
         while (it.hasNext()) {
-            string.append(it.next());
+            string.append(it.next().toString().substring(0,4));
             string.append("|");
         }
-        System.out.println(string.substring(0, string.length()-1));
-        return string.substring(0, string.length()-1);
+        System.out.println(string.substring(0, string.length() - 1));
+        return string.substring(0, string.length() - 1);
     }
 }

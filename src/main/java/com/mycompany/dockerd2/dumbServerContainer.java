@@ -28,7 +28,7 @@ public class dumbServerContainer extends Container {
     public dumbServerContainer() {
         id = "";
         time = System.currentTimeMillis();
-        leaseTime = time + MILLISECONDS.convert(10, SECONDS);
+        leaseTime = time + MILLISECONDS.convert(40, SECONDS);
     }
 
     @Override
