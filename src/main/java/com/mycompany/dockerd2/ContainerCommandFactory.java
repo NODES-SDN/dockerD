@@ -7,6 +7,7 @@ package com.mycompany.dockerd2;
  */
 
 
+import Containers.Container;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +19,10 @@ import java.util.logging.Logger;
 public abstract class ContainerCommandFactory {
 
     abstract HashMap makeCommands();
+    
+    /*
+    Creates new containers by container name.
+    */
     public static Container makeANewContainer(String container) {
         try {
              Class<?> c = Class.forName(container);

@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.dockerd2;
+package Containers;
 
+import com.mycompany.dockerd2.ContainerCommander;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,8 +20,7 @@ import java.util.logging.Logger;
  * @author laursuom
  */
 public class dumbServerContainer extends Container {
-
-    public static String singletonId = null;
+    public static String singletonId = null; //This class only allows one instance of itself
     Process p;
     String PORT = "15001:15001/tcp";
 
@@ -34,7 +33,7 @@ public class dumbServerContainer extends Container {
     @Override
     public void run() {
 
-        if (p != null && processStillRunning()) {
+        if (p != null && processStillRunning()) { // If this container is still running, don't create a new one.
             System.out.println("Called the already running Decision Server!");
             sendContainerInfo();
         } else {
@@ -61,7 +60,9 @@ public class dumbServerContainer extends Container {
         }
 
     }
-
+    /*
+    Returns container's IP address and portnumber
+    */
     private void sendContainerInfo() {
         System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", singletonId, out));
         out.write(",");
@@ -69,7 +70,9 @@ public class dumbServerContainer extends Container {
         out.println();
         out.flush();
     }
-
+    /*
+    Checks, if the container process is still running.
+    */
     private boolean processStillRunning() {
         try {
             Field hasExited = p.getClass().getDeclaredField("hasExited");
@@ -80,7 +83,9 @@ public class dumbServerContainer extends Container {
         }
         return false;
     }
-
+    /*
+    Opens the container output to a XTerminal when the container is launched.
+    */
     private static class openToTerminal implements Runnable {
 
         String id;

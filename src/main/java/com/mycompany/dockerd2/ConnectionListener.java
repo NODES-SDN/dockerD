@@ -5,6 +5,7 @@ package com.mycompany.dockerd2;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import Containers.Container;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,6 +23,9 @@ public class ConnectionListener {
     int port;
     HashMap<String, Class> commands = new HashMap();
 
+    /*
+     Sets the available containers and the port to which clients connect.
+     */
     public ConnectionListener(int port, ContainerCommandFactory commandFactory) {
         this.port = port;
         this.commands = commandFactory.makeCommands();
@@ -37,14 +41,13 @@ public class ConnectionListener {
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 System.out.println("Client connected from address " + clientSocket.getRemoteSocketAddress().toString() + "!");
-                if (DockerD.isOnIPWhitelist(clientSocket.getRemoteSocketAddress().toString())) {
-                new Thread(new UI(out, in, clientSocket)).start();
+                if (DockerD.isOnIPWhitelist(clientSocket.getRemoteSocketAddress().toString())) { // if the connecting client isn't on the IP whitelist, the connection is denied.
+                    new Thread(new UI(out, in, clientSocket)).start(); //Allocate UI for the client.
                 } else {
                     out.println("Access denied!");
                     closeClientSocket(out, in, clientSocket);
                 }
             }
-
         } catch (IOException ex) {
             Logger.getLogger(ConnectionListener.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -59,7 +62,7 @@ public class ConnectionListener {
         private UI(PrintWriter out, BufferedReader in, Socket clientSocket) {
             this.out = out;
             this.in = in;
-            this.clientSocket= clientSocket;
+            this.clientSocket = clientSocket;
 
         }
 
@@ -68,7 +71,7 @@ public class ConnectionListener {
 
             try {
                 while (true) {
-               //     out.println("Please write the name of the docker container you wish to launch");
+                    //     out.println("Please write the name of the docker container you wish to launch");
                     StringTokenizer message = new StringTokenizer(in.readLine());
                     if (message.hasMoreElements()) {
                         String first = message.nextToken();
@@ -100,14 +103,16 @@ public class ConnectionListener {
                     }
                 }
             } catch (NullPointerException np) {
-                closeClientSocket(out,in, clientSocket);
+                closeClientSocket(out, in, clientSocket);
             } catch (IOException ex) {
                 System.err.println("U dun goofed sonny! (Really should get a better error message...)");
                 System.err.println(ex.getMessage());
             }
         }
-
         
+        /*
+         Returns a list of all available commands.
+         */
 
         private String listCommands() {
             StringBuilder string = new StringBuilder();
@@ -122,14 +127,18 @@ public class ConnectionListener {
         }
     }
     
+    /*
+     Deallocates resources after a client has disconnected.
+     */
+
     protected void closeClientSocket(PrintWriter out, BufferedReader in, Socket clientSocket) {
-            System.out.println("Client has disconnected");
-            try {
-                clientSocket.close();
-                out.close();
-                in.close();
-            } catch (IOException e) {
-                System.out.println("Error when closing the socket");
-            }
+        System.out.println("Client has disconnected");
+        try {
+            clientSocket.close();
+            out.close();
+            in.close();
+        } catch (IOException e) {
+            System.out.println("Error when closing the socket");
         }
+    }
 }

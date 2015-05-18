@@ -5,6 +5,7 @@
  */
 package com.mycompany.dockerd2;
 
+import Containers.Container;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.util.ArrayList;
@@ -42,6 +43,11 @@ public class ContainerManager implements Runnable {
         idsContainers = new ConcurrentHashMap();
     }
 
+    /*
+    Starts the periodic Keep-alive checks, which inspects containers for their lease time every
+    thirty seconds, requesting a shutdown whenever their lease time is expired.
+    */
+    
     @Override
     public void run() {
         while (true) {
@@ -54,12 +60,17 @@ public class ContainerManager implements Runnable {
                 }
             }
             try {
-                sleep(90000);
+                System.gc(); //Notify the garbage collector to clean memory of removed containers.
+                sleep(30000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ContainerManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+    
+    /*
+    Stores a container and its info to HashMaps.
+    */
     
     public static void storeContainer(String ip, String id, Container container) {
        if (!clientsIds.containsKey(ip)) {
@@ -69,10 +80,17 @@ public class ContainerManager implements Runnable {
            idsContainers.put(id, container);
        } 
     
+    /*
+    Returns the IDs of the containers bound to a certain client.
+    */
+    
      public static CopyOnWriteArrayList getIds(String ip) {
         return clientsIds.get(ip);
     }
     
+     /*
+     Shuts down the container process and removes its data from the data structures
+     */
 
     private void shutDownContainer(String id, String client) {
         System.out.println("Lease time for the container " +  id + " has expired! Stopping the container");

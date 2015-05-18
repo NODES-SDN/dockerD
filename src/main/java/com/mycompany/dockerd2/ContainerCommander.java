@@ -19,12 +19,17 @@ import java.util.logging.Logger;
  *
  * @author laursuom
  */
+
+/*
+ A class containing commands for interracting with containers via Docker Daemon.
+ */
 public class ContainerCommander {
 
     /*
      Returns the requested container value as a string using 'docker inspect'.
      */
     public static String getContainerFieldValue(String field, String id, PrintWriter out) {
+      
         ProcessBuilder pb = new ProcessBuilder("docker", "inspect", "--format", "'{{" + field + "}}'", id);
         try {
             Process p = pb.start();
@@ -66,7 +71,11 @@ public class ContainerCommander {
         return string.toString();
     }
 
+    /*
+     Executes a given command to a given docker Container with docker exec
+     */
     static String exec(String id, String command, PrintWriter out) {
+       
         ProcessBuilder pb = new ProcessBuilder("docker", "exec", id, command);
         StringBuilder string = new StringBuilder();
         try {
@@ -88,7 +97,10 @@ public class ContainerCommander {
         out.write(string.toString());
         return string.toString();
     }
-
+    
+/*
+    Returns and prints the info of the containers by docker ps, filtered to those containers of which the client is an owner.
+    */
     public static String list(PrintWriter out, String ip) {
 
         if (ContainerManager.getIds(ip) != null) {
@@ -125,12 +137,16 @@ public class ContainerCommander {
 
     }
 
+    /*
+    Builds a filter for the containers bound to a certain client
+    */
+    
     private static String buildFilter(String ip) {
         CopyOnWriteArrayList ids = ContainerManager.getIds(ip);
         Iterator it = ids.iterator();
         StringBuilder string = new StringBuilder();
         while (it.hasNext()) {
-            string.append(it.next().toString().substring(0,4));
+            string.append(it.next().toString().substring(0, 4));
             string.append("|");
         }
         System.out.println(string.substring(0, string.length() - 1));

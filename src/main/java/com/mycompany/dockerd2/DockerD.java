@@ -29,6 +29,9 @@ public class DockerD {
     /**
      * @param args the command line arguments
      */
+    /*
+    List of accepted connections.
+    */
     private static ArrayList<String> ipWhiteList = new ArrayList();
 
     public static void main(String[] args) {
@@ -37,9 +40,9 @@ public class DockerD {
             System.err.println("Usage: DockerD <portnumber>");
             System.exit(0);
         } else {
-            cleanContainerNameTags();
-            ipWhiteList = readIpWhiteList();
-            new Thread(new ContainerManager()).start();
+            cleanContainerNameTags(); //Cleanup for possible already running containers.
+            ipWhiteList = readIpWhiteList(); //Get IP whitelist.
+            new Thread(new ContainerManager()).start(); //Start the Container Manager.
 //            for (int i = 0; i < ipWhiteList.size(); i++) {
 //                System.out.println(ipWhiteList.get(i));
 //            }
@@ -49,16 +52,11 @@ public class DockerD {
 //            } else {
 //                ports = ArgParserService.parsePortsFromArgumentList(args);
 //           }
-            Runtime.getRuntime().addShutdownHook(new Thread() {
+            Runtime.getRuntime().addShutdownHook(new Thread() { //Add a shutdownhook, which shuts down all the containers when this program is interrupted.
                 @Override
                 public void run() {
                     System.out.println("Cloud Manager interrupted. Shutting down all the containers.");
-                    try {
-                        sleep(2);
                         cleanContainerNameTags();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(DockerD.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
             });
             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0]), new DefaultCommands());
@@ -66,7 +64,10 @@ public class DockerD {
         }
 
     }
-
+    
+    /*
+    Kills all the running containers, removes the nametag 'server'.
+    */
     private static void cleanContainerNameTags() {
         String[] cmd = {
             "/bin/sh",
@@ -82,6 +83,9 @@ public class DockerD {
         }
     }
 
+    /*
+    Reads the IP whitelist from a file.
+    */
     private static ArrayList<String> readIpWhiteList() {
         List<String> list = new ArrayList();
         try {
@@ -94,6 +98,10 @@ public class DockerD {
         return (ArrayList) list;
     }
 
+    /*
+    Checks, if the given IP-address is on the whitelist.
+    */
+    
     public static boolean isOnIPWhitelist(String IP) {
         String[] tmpIP = IP.split(":");
         tmpIP[0] = tmpIP[0].substring(1);

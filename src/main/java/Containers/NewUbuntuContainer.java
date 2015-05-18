@@ -1,4 +1,4 @@
-package com.mycompany.dockerd2;
+package Containers;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author laursuom
  */
-class NewUbuntuContainer extends Container {
+public class NewUbuntuContainer extends Container {
 
     Process p;
     String PORT = "5000";

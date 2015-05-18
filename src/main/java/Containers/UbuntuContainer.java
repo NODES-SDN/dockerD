@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.dockerd2;
+package Containers;
 
 import com.spotify.docker.client.*;
 import com.spotify.docker.client.messages.ContainerConfig;
@@ -26,7 +26,7 @@ public class UbuntuContainer extends Container {
     
 
     @Override
-    void run() {
+    public void run() {
 
         try {
 
