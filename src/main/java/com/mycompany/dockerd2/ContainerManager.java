@@ -61,7 +61,7 @@ public class ContainerManager implements Runnable {
             }
             try {
                 System.gc(); //Notify the garbage collector to clean memory of removed containers.
-                sleep(30000);
+                sleep(90000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ContainerManager.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -107,5 +107,4 @@ public class DockerD {
         tmpIP[0] = tmpIP[0].substring(1);
         return ipWhiteList.contains(tmpIP[0]);
     }
-
 }

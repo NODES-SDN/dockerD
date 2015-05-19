@@ -106,8 +106,8 @@ public class ContainerCommander {
         if (ContainerManager.getIds(ip) != null) {
             String filter = buildFilter(ip);
             StringBuilder string = new StringBuilder();
-            ProcessBuilder pb = new ProcessBuilder("docker", "ps", "--filter=", "id='" + filter + "'");
-
+            ProcessBuilder pb = new ProcessBuilder("docker","ps --filter=id='" + filter + "'");
+            System.out.println(pb.command());
             try {
                 Process p = pb.start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
