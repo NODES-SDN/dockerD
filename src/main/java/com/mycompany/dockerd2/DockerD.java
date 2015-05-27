@@ -33,6 +33,7 @@ public class DockerD {
     List of accepted connections.
     */
     private static ArrayList<String> ipWhiteList = new ArrayList();
+    public static int port;
 
     public static void main(String[] args) {
 
@@ -60,6 +61,7 @@ public class DockerD {
                 }
             });
             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0]), new DefaultCommands());
+            port = Integer.parseInt(args[0]);
             listener.run();
         }
 
