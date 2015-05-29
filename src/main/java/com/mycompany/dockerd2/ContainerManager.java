@@ -6,14 +6,11 @@
 package com.mycompany.dockerd2;
 
 import Containers.Container;
-import static com.mycompany.dockerd2.DockerD.port;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -120,18 +117,18 @@ public class ContainerManager implements Runnable {
         @Override
         public void run() {
             try {
-                DatagramSocket serverSocket = new DatagramSocket(1025);
+                DatagramSocket serverSocket = new DatagramSocket(DockerD.port);
                 byte[] receiveData = new byte[1000];
 
                 System.out.printf("Listening on udp:%s:%d%n",
-                        InetAddress.getLocalHost().getHostAddress(), 1025);
+                        InetAddress.getLocalHost().getHostAddress(), DockerD.port);
                 DatagramPacket receivePacket = new DatagramPacket(receiveData,
                         receiveData.length);
 
                 while (true) {
                     serverSocket.receive(receivePacket);
-                    String sentence = new String(receivePacket.getData(), 0,
-                            receivePacket.getLength());
+                    System.out.println("Got a udp packet!");
+                    String sentence = new String(receivePacket.getData(), 0,receivePacket.getLength());
                     System.out.println("RECEIVED: " + sentence);
                     // now send acknowledgement packet back to sender     
 
