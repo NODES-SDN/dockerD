@@ -130,6 +130,10 @@ public class ContainerManager implements Runnable {
                     System.out.println("Got a udp packet!");
                     String sentence = new String(receivePacket.getData(), 0,receivePacket.getLength());
                     System.out.println("RECEIVED: " + sentence);
+                    String[] arguments = sentence.split(";");
+                    if (arguments.length == 2) {
+                        extendLeaseTime(arguments[0], Integer.parseInt(arguments[1]));
+                    }
                     // now send acknowledgement packet back to sender     
 
                 }
