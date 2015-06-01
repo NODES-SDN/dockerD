@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  A class containing commands for interracting with containers via Docker Daemon.
  */
 public class ContainerCommander {
-
+    
     /*
      Returns the requested container value as a string using 'docker inspect'.
      */

@@ -131,8 +131,10 @@ public class ContainerManager implements Runnable {
                     String sentence = new String(receivePacket.getData(), 0,receivePacket.getLength());
                     System.out.println("RECEIVED: " + sentence);
                     String[] arguments = sentence.split(";");
-                    if (arguments.length == 2) {
+                    if (arguments.length == 2 && DockerD.isOnIPWhitelist(receivePacket.getSocketAddress().toString())) {
                         extendLeaseTime(arguments[0], Integer.parseInt(arguments[1]));
+                    } else {
+                        System.out.println("Access Denied!");
                     }
                     // now send acknowledgement packet back to sender     
 

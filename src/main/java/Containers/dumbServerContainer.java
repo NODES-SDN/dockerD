@@ -22,12 +22,13 @@ import java.util.logging.Logger;
 public class dumbServerContainer extends Container {
     public static String singletonId = null; //This class only allows one instance of itself
     Process p;
-    String PORT = "15001:15001/tcp";
+    String PORT = "15001";
 
     public dumbServerContainer() {
         id = "";
         time = System.currentTimeMillis();
         leaseTime = time + MILLISECONDS.convert(40, SECONDS);
+        port = PORT;
     }
 
     @Override
@@ -59,16 +60,6 @@ public class dumbServerContainer extends Container {
             }
         }
 
-    }
-    /*
-    Returns container's IP address and portnumber
-    */
-    private void sendContainerInfo() {
-        System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", singletonId, out));
-        out.write(",");
-        System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \"15001/tcp\") 0).HostPort", singletonId, out));
-        out.println();
-        out.flush();
     }
     /*
     Checks, if the container process is still running.
