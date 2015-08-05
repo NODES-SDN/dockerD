@@ -40,8 +40,10 @@ public class ConnectionListener {
                 Socket clientSocket = serverSocket.accept();
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                System.out.println("Client connected from address " + clientSocket.getRemoteSocketAddress().toString() + "!");
-                if (DockerD.isOnIPWhitelist(clientSocket.getRemoteSocketAddress().toString())) { // if the connecting client isn't on the IP whitelist, the connection is denied.
+                String ip = clientSocket.getRemoteSocketAddress().toString();
+                System.out.println("Client connected from address " + ip + "!");
+                if (DockerD.isOnIPWhitelist(ip)) { // if the connecting client isn't on the IP whitelist, the connection is denied.
+                    DockerD.gui.addIP(ip);
                     new Thread(new UI(out, in, clientSocket)).start(); //Allocate UI for the client.
                 } else {
                     out.println("Access denied!");
@@ -133,6 +135,7 @@ public class ConnectionListener {
 
     protected void closeClientSocket(PrintWriter out, BufferedReader in, Socket clientSocket) {
         System.out.println("Client has disconnected");
+        DockerD.gui.removeIP(clientSocket.getRemoteSocketAddress().toString());
         try {
             clientSocket.close();
             out.close();
