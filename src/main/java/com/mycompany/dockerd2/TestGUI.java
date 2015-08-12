@@ -32,10 +32,16 @@ public class TestGUI extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new jList2();
+        jList2 = new MutableList();
         jScrollPane3 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jScrollPane1.setBackground(new java.awt.Color(1, 128, 254));
+        jScrollPane1.setBorder(new javax.swing.border.MatteBorder(null));
+        jScrollPane1.setForeground(new java.awt.Color(252, 28, 28));
+        jScrollPane1.setToolTipText("Hah Gay");
 
         jList2.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -43,6 +49,10 @@ public class TestGUI extends javax.swing.JFrame {
             public Object getElementAt(int i) { return strings[i]; }
         });
         jScrollPane2.setViewportView(jList2);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane3.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -111,6 +121,7 @@ public class TestGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 
     class MutableList extends JList {

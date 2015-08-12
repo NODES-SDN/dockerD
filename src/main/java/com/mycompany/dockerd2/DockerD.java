@@ -28,6 +28,7 @@ public class DockerD {
     private static ArrayList<String> ipWhiteList = new ArrayList();
     public static int port;
     public static GUI gui;
+    public static ContainerManager containerManager;
 
     public static void main(String[] args) {
 
@@ -37,7 +38,7 @@ public class DockerD {
         } else {
             cleanContainerNameTags(); //Cleanup for possible already running containers.
             ipWhiteList = readIpWhiteList(); //Get IP whitelist.
-            new Thread(new ContainerManager()).start(); //Start the Container Manager.
+            new Thread(containerManager = new ContainerManager()).start(); //Start the Container Manager.
 //            for (String ipWhiteList1 : ipWhiteList) {
 //                System.out.println(ipWhiteList1);
 //            }

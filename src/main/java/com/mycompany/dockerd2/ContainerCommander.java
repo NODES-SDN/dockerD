@@ -36,7 +36,7 @@ public class ContainerCommander {
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String string = reader.readLine();
             string = string.substring(1, string.length() - 1);
-            out.write(string);
+            if (out != null) {out.write(string);};
             return string;
         } catch (IOException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);

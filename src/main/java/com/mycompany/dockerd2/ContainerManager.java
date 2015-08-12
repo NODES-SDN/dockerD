@@ -12,6 +12,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -33,8 +34,8 @@ public class ContainerManager implements Runnable {
      However, they aren't as common as read-only operations which are performed periodically
      so using it is justified. Further investigation probably needed.
      */
-    private static volatile ConcurrentHashMap<String, CopyOnWriteArrayList<String>> clientsIds;
-    private static volatile ConcurrentHashMap<String, Container> idsContainers;
+    public static volatile ConcurrentHashMap<String, CopyOnWriteArrayList<String>> clientsIds;
+    public static volatile ConcurrentHashMap<String, Container> idsContainers;
 
     public ContainerManager() {
         clientsIds = new ConcurrentHashMap();
@@ -112,6 +113,9 @@ public class ContainerManager implements Runnable {
         }
     }
 
+    public Set<String> getIds() {
+        return idsContainers.keySet();
+    }
     private class LeaseTimeExtender implements Runnable {
 
         @Override

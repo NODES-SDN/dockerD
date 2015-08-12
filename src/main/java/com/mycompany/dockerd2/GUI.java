@@ -7,6 +7,20 @@ package com.mycompany.dockerd2;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import static java.lang.Thread.sleep;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,7 +32,11 @@ public class GUI extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public GUI() {
-        initComponents();
+       initComponents();
+       PrintStream stream = new PrintStream(new CustomOutputStream(jTextArea1));
+       System.setOut(stream);
+        ContainerListUpdater containerListUpdater = new ContainerListUpdater();
+        new Thread(containerListUpdater).start();
         setVisible(true);
     }
 
@@ -33,59 +51,160 @@ public class GUI extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new MutableList();
+        IPList = new MutableList();
+        containerTable = new MutableList();
+        containerTable.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         jScrollPane3 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        jScrollPane2.setViewportView(jList2);
+        jScrollPane2.setViewportView(IPList);
+        jScrollPane1.setViewportView(containerTable);
+        
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane3.setViewportView(jTextArea1);
+
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
-            .addComponent(jScrollPane3)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
+                .addComponent(jScrollPane3)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
         );
 
         pack();
     }// </editor-fold>                        
 
-  
     // Variables declaration - do not modify                     
-    private MutableList jList2;
+    private MutableList IPList;
+    private MutableList containerTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration                   
 
     class MutableList extends JList {
-    MutableList() {
-	super(new DefaultListModel());
+
+        MutableList() {
+            super(new DefaultListModel());
+        }
+
+        DefaultListModel getContents() {
+            return (DefaultListModel) getModel();
+        }
     }
-    DefaultListModel getContents() {
-	return (DefaultListModel)getModel();
+
+    class MutableTable extends JTable {
+
+        MutableTable() {
+            super(new DefaultTableModel());
+        }
+
+        DefaultTableModel getContents() {
+            return (DefaultTableModel) getModel();
+        }
     }
-}
+
     public void addIP(String ip) {
-        jList2.getContents().addElement(ip);
+        IPList.getContents().addElement(ip);
+    }
+
+    public void removeIP(String ip) {
+        IPList.getContents().removeElement(ip);
+    }
+
+    public void addContainer(String container) {
+        containerTable.getContents().addElement(container);
+    }
+
+    public void removeContainer(String container) {
+        containerTable.getContents().removeElement(container);
+    }
+
+    protected class ContainerListUpdater implements Runnable {
+               
+        @Override
+        public void run() {
+            
+            try {
+                while (true) {
+                   
+                    Set<String> names = getNames(DockerD.containerManager.getIds());
+                    System.out.println(names);
+                    for (Object id : containerTable.getContents().toArray()) {
+                        System.out.println(id.toString());
+                        if (!names.contains(id.toString())) {
+                            removeContainer(id.toString());   
+                        }
+                    }
+                    System.out.println(DockerD.containerManager.getIds().toString());
+                    for (String id : DockerD.containerManager.getIds()) {
+                        Process p = Runtime.getRuntime().exec(getCommand(id.substring(0, 10)));
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        if (!reader.readLine().equals("0") && !containerTable.getContents().contains(getNameFromId(id))) {
+                            addContainer(getNameFromId(id));
+                        }
+
+                    }
+                    sleep(5000);
+                }
+            } catch (IOException | InterruptedException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        
+        private String[] getCommand(String id) {
+              String[] cmd = {
+                    "/bin/sh",
+                    "-c",
+                    "docker ps | grep " + id + " | wc -l"
+                };
+              return cmd;
+        }
+        
+        private Set<String> getNames(Set<String> ids) {
+            Set<String> names = new HashSet<String>();
+            for (String id : ids) {
+                names.add(getNameFromId(id));
+            }
+            return names;
+        }
+
+        private String getNameFromId(String id) {
+           return ContainerCommander.getContainerFieldValue(".Config.Image", id, null);
+        }
     }
     
-    public void removeIP(String ip) {
-        jList2.getContents().removeElement(ip);
+  protected class CustomOutputStream extends OutputStream {
+    private JTextArea textArea;
+     
+    public CustomOutputStream(JTextArea textArea) {
+        this.textArea = textArea;
+    }
+     
+    @Override
+    public void write(int b) throws IOException {
+        // redirects data to the text area
+        textArea.append(String.valueOf((char)b));
+        // scrolls the text area to the end of data
+        textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 }
-
-
+}
