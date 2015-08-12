@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
@@ -32,9 +34,9 @@ public class GUI extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public GUI() {
-       initComponents();
-       PrintStream stream = new PrintStream(new CustomOutputStream(jTextArea1));
-       System.setOut(stream);
+        initComponents();
+        PrintStream stream = new PrintStream(new CustomOutputStream(jTextArea1));
+        System.setOut(stream);
         ContainerListUpdater containerListUpdater = new ContainerListUpdater();
         new Thread(containerListUpdater).start();
         setVisible(true);
@@ -48,55 +50,68 @@ public class GUI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
+        setTitle("Cloud Manager");
         jScrollPane1 = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         IPList = new MutableList();
+        hostLabel = new JLabel("Connected Hosts");
+        containerLabel = new JLabel("Running Containers");
+
         containerTable = new MutableList();
         containerTable.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        
         jScrollPane2.setViewportView(IPList);
         jScrollPane1.setViewportView(containerTable);
-        
+
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane3.setViewportView(jTextArea1);
-
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(hostLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                                .addComponent(containerLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
                 .addComponent(jScrollPane3)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(hostLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(containerLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
                                 .addComponent(jScrollPane1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
         );
-
         pack();
     }// </editor-fold>                        
 
-    // Variables declaration - do not modify                     
+    // Variables declaratio                    
     private MutableList IPList;
     private MutableList containerTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea jTextArea1;
+    private JLabel hostLabel;
+    private JLabel containerLabel;
     // End of variables declaration                   
 
     class MutableList extends JList {
@@ -138,19 +153,19 @@ public class GUI extends javax.swing.JFrame {
     }
 
     protected class ContainerListUpdater implements Runnable {
-               
+
         @Override
         public void run() {
-            
+
             try {
                 while (true) {
-                   
+
                     Set<String> names = getNames(DockerD.containerManager.getIds());
                     System.out.println(names);
                     for (Object id : containerTable.getContents().toArray()) {
                         System.out.println(id.toString());
                         if (!names.contains(id.toString())) {
-                            removeContainer(id.toString());   
+                            removeContainer(id.toString());
                         }
                     }
                     System.out.println(DockerD.containerManager.getIds().toString());
@@ -169,16 +184,16 @@ public class GUI extends javax.swing.JFrame {
             }
 
         }
-        
+
         private String[] getCommand(String id) {
-              String[] cmd = {
-                    "/bin/sh",
-                    "-c",
-                    "docker ps | grep " + id + " | wc -l"
-                };
-              return cmd;
+            String[] cmd = {
+                "/bin/sh",
+                "-c",
+                "docker ps | grep " + id + " | wc -l"
+            };
+            return cmd;
         }
-        
+
         private Set<String> getNames(Set<String> ids) {
             Set<String> names = new HashSet<String>();
             for (String id : ids) {
@@ -188,23 +203,24 @@ public class GUI extends javax.swing.JFrame {
         }
 
         private String getNameFromId(String id) {
-           return ContainerCommander.getContainerFieldValue(".Config.Image", id, null);
+            return ContainerCommander.getContainerFieldValue(".Config.Image", id, null);
         }
     }
-    
-  protected class CustomOutputStream extends OutputStream {
-    private JTextArea textArea;
-     
-    public CustomOutputStream(JTextArea textArea) {
-        this.textArea = textArea;
+
+    protected class CustomOutputStream extends OutputStream {
+
+        private JTextArea textArea;
+
+        public CustomOutputStream(JTextArea textArea) {
+            this.textArea = textArea;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            // redirects data to the text area
+            textArea.append(String.valueOf((char) b));
+            // scrolls the text area to the end of data
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
     }
-     
-    @Override
-    public void write(int b) throws IOException {
-        // redirects data to the text area
-        textArea.append(String.valueOf((char)b));
-        // scrolls the text area to the end of data
-        textArea.setCaretPosition(textArea.getDocument().getLength());
-    }
-}
 }

@@ -53,6 +53,7 @@ public class DockerD {
                 public void run() {
                     System.out.println("Cloud Manager interrupted. Shutting down all the containers.");
                     cleanContainerNameTags();
+                    gui.dispose();
                 }
             });
             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0]), new DefaultCommands());
