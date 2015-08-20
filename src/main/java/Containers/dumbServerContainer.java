@@ -5,11 +5,11 @@
  */
 package Containers;
 
-import com.mycompany.dockerd2.ContainerCommander;
+import com.mycompany.dockerd2.ContainerManager;
+import com.mycompany.dockerd2.DockerD;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import java.util.logging.Level;
@@ -20,12 +20,12 @@ import java.util.logging.Logger;
  * @author laursuom
  */
 public class dumbServerContainer extends Container {
-    public static String singletonId = null; //This class only allows one instance of itself
-    Process p;
+    public static String singletonID; //This class only allows one instance of itself
+    public static Process p;
     String PORT = "15001";
 
     public dumbServerContainer() {
-        id = "";
+        id = null;
         time = System.currentTimeMillis();
         leaseTime = time + MILLISECONDS.convert(40, SECONDS);
         port = PORT;
@@ -34,8 +34,9 @@ public class dumbServerContainer extends Container {
     @Override
     public void run() {
 
-        if (p != null && processStillRunning()) { // If this container is still running, don't create a new one.
+        if (singletonID != null && processStillRunning()) { // If this container is still running, don't create a new one.
             System.out.println("Called the already running Decision Server!");
+            id = singletonID;
             sendContainerInfo();
         } else {
             System.out.println("Decision Server invoked! Sending IP address and Portnumber to client!");
@@ -51,7 +52,7 @@ public class dumbServerContainer extends Container {
                 String message;
                 message = input.readLine();
                 id = message;
-                singletonId = message;
+                singletonID = id;
                 new Thread(new openToTerminal(id)).start();
                 sendContainerInfo();
 
@@ -65,14 +66,17 @@ public class dumbServerContainer extends Container {
     Checks, if the container process is still running.
     */
     private boolean processStillRunning() {
-        try {
-            Field hasExited = p.getClass().getDeclaredField("hasExited");
-            hasExited.setAccessible(true);
-            return !(Boolean) hasExited.get(p);
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex) {
-            Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+        return DockerD.containerManager.getIds().contains(singletonID);
+        
+        
+//        try {
+//            Field hasExited = p.getClass().getDeclaredField("hasExited");
+//            hasExited.setAccessible(true);
+//            return !(Boolean) hasExited.get(p);
+//        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex) {
+//            Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return false;
     }
     /*
     Opens the container output to a XTerminal when the container is launched.

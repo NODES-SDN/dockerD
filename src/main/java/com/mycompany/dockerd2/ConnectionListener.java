@@ -44,7 +44,7 @@ public class ConnectionListener {
                 System.out.println("Client connected from address " + ip + "!");
                 if (DockerD.isOnIPWhitelist(ip)) { // if the connecting client isn't on the IP whitelist, the connection is denied.
                     DockerD.gui.addIP(ip);
-                    new Thread(new UI(out, in, clientSocket)).start(); //Allocate UI for the client.
+                   new Thread(new UI(out, in, clientSocket)).start(); //Allocate UI for the client.
                 } else {
                     out.println("Access denied!");
                     closeClientSocket(out, in, clientSocket);
