@@ -30,14 +30,20 @@ public class ContainerCommander {
      */
     public static String getContainerFieldValue(String field, String id, PrintWriter out) {
       
-        ProcessBuilder pb = new ProcessBuilder("docker", "inspect", "--format", "'{{" + field + "}}'", id);
+        ProcessBuilder pb = new ProcessBuilder("docker", "inspect", "--format", "{{"+field +"}}'", id);
+        
         try {
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String string = reader.readLine();
-            string = string.substring(1, string.length() - 1);
-            if (out != null) {out.write(string);};
-            return string;
+            StringBuilder string = new StringBuilder();
+            string.append(reader.readLine());
+            for (int i = 0; i < string.length(); i++) {
+                if (string.charAt(i) == '\'') {
+                string.deleteCharAt(i);
+            }
+            }
+            if (out != null) {out.write(string.toString());}
+            return string.toString();
         } catch (IOException ex) {
             Logger.getLogger(ContainerCommander.class.getName()).log(Level.SEVERE, null, ex);
         }

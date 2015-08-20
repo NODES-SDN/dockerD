@@ -38,10 +38,10 @@ public abstract class Container {
         System.out.println(ContainerCommander.getContainerFieldValue(".NetworkSettings.IPAddress", id, out));
         out.write(",");
         System.out.println(ContainerCommander.getContainerFieldValue("(index (index .NetworkSettings.Ports \""+port+"/tcp\") 0).HostPort", id, out));
-        out.write(",");
-        System.out.println(id);
-        out.write(id);
-        out.println();
+        //out.write(",");
+        //System.out.println(id);
+        //out.write(id);
+        //out.println();
         out.flush();
     }
 

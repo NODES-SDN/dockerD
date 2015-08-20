@@ -69,7 +69,7 @@ public class GUI extends javax.swing.JFrame {
         containerTable = new MutableList();
         containerTable.setLayout(new GridLayout(0,2));
         containerTable.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        containerTable.setCellRenderer(new CellRenderer());
+        // containerTable.setCellRenderer(new CellRenderer());
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
