@@ -95,6 +95,10 @@ public class DockerD {
         }
         return (ArrayList) list;
     }
+    
+    public static void Shutdown() {
+        
+    }
 
     /*
      Checks, if the given IP-address is on the whitelist.

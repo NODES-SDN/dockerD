@@ -5,23 +5,32 @@
  */
 package com.mycompany.dockerd2;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import static java.lang.Thread.sleep;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -58,12 +67,14 @@ public class GUI extends javax.swing.JFrame {
         containerLabel = new JLabel("Running Containers");
 
         containerTable = new MutableList();
+        containerTable.setLayout(new GridLayout(0,2));
         containerTable.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        containerTable.setCellRenderer(new CellRenderer());
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        
+
         jScrollPane2.setViewportView(IPList);
         jScrollPane1.setViewportView(containerTable);
 
@@ -112,6 +123,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     private JLabel hostLabel;
     private JLabel containerLabel;
+    private ArrayList<JPanel> listData;
     // End of variables declaration                   
 
     class MutableList extends JList {
@@ -161,14 +173,13 @@ public class GUI extends javax.swing.JFrame {
                 while (true) {
 
                     Set<String> names = getNames(DockerD.containerManager.getIds());
-                    System.out.println(names);
                     for (Object id : containerTable.getContents().toArray()) {
-                        System.out.println(id.toString());
+                        
                         if (!names.contains(id.toString())) {
                             removeContainer(id.toString());
                         }
                     }
-                    System.out.println(DockerD.containerManager.getIds().toString());
+                    
                     for (String id : DockerD.containerManager.getIds()) {
                         Process p = Runtime.getRuntime().exec(getCommand(id.substring(0, 10)));
                         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -205,6 +216,33 @@ public class GUI extends javax.swing.JFrame {
         private String getNameFromId(String id) {
             return ContainerCommander.getContainerFieldValue(".Config.Image", id, null);
         }
+    }
+
+    protected class CellRenderer implements ListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList jList, Object value, int cellIndex, boolean isSelected, boolean cellHasFocus) {
+
+            if (value instanceof String) {
+                JPanel panel = new JPanel();
+                JLabel label = new JLabel(value.toString());
+                label.setBounds(new Rectangle(1000,1000));
+                label.setForeground(Color.red);
+                label.setFont(new Font("name", Font.PLAIN, 50));
+                label.setVisible(true);
+                panel.add(label);
+                panel.setForeground(Color.red);
+                panel.setBounds(new Rectangle(1000,1000));
+                panel.setBackground(Color.black);
+                panel.setVisible(true);
+                
+                return panel;
+            } else {
+                return new JLabel("Lolwut");
+            }
+
+        }
+
     }
 
     protected class CustomOutputStream extends OutputStream {
