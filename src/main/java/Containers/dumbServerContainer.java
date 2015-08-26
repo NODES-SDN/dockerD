@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class dumbServerContainer extends Container {
     public static String singletonID; //This class only allows one instance of itself
     public static Process p;
-    String PORT = "15001";
+    String PORT = "15001:15001/tcp";
 
     public dumbServerContainer() {
         id = null;
