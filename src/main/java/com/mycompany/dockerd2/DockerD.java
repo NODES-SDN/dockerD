@@ -29,6 +29,7 @@ public class DockerD {
     public static int port;
     public static GUI gui;
     public static ContainerManager containerManager;
+    private static boolean acceptEverything = false;
 
     public static void main(String[] args) {
 
@@ -59,7 +60,7 @@ public class DockerD {
             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0]), new DefaultCommands());
             port = Integer.parseInt(args[0]);
             gui = new GUI();
-            
+
             listener.run();
         }
 
@@ -90,23 +91,27 @@ public class DockerD {
         List<String> list = new ArrayList();
         list = readLines();
         if (list.isEmpty()) {
-            System.out.println("IPWhitelist not found! Aborting!");
-            System.exit(1);
+            System.out.println("IPWhitelist not found! Accepting all connections.");
+            acceptEverything = true;
         }
         return (ArrayList) list;
     }
-    
+
     public static void Shutdown() {
-        
+
     }
 
     /*
      Checks, if the given IP-address is on the whitelist.
      */
     public static boolean isOnIPWhitelist(String IP) {
-        String[] tmpIP = IP.split(":");
-        tmpIP[0] = tmpIP[0].substring(1);
-        return ipWhiteList.contains(tmpIP[0]);
+        if (acceptEverything) {
+            return true;
+        } else {
+            String[] tmpIP = IP.split(":");
+            tmpIP[0] = tmpIP[0].substring(1);
+            return ipWhiteList.contains(tmpIP[0]);
+        }
     }
 
     private static List<String> readLines() {
