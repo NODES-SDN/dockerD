@@ -37,6 +37,7 @@ public class ConnectionListener {
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 System.out.println("Client connected!");
+                DockerD.gui.addIP(clientSocket.getRemoteSocketAddress().toString());
                 new Thread(new UI(out, in, clientSocket)).start();
             }
 
@@ -73,7 +74,7 @@ public class ConnectionListener {
                             temp.setReader(in);
                             temp.setWriter(out);
                             temp.run();
-                            containers.put(temp.id, temp);
+                            DockerD.containerManager.storeContainer(ClientSocket.getRemoteSocketAddress().toString(), temp.id, temp);
                         } else if (first.equals("inspect")) {
                             if (message.countTokens() == 2) {
                                 ContainerCommander.getContainerFieldValue(message.nextToken(), message.nextToken(), out);
@@ -101,6 +102,7 @@ public class ConnectionListener {
                     ClientSocket.close();
                     out.close();
                     in.close();
+                    DockerD.gui.removeIP(ClientSocket.getRemoteSocketAddress().toString());
                 } catch (IOException e) {
                     System.out.println("Error when closing the socket");
                 }

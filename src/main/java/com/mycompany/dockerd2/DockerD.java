@@ -16,17 +16,19 @@ import java.util.logging.Logger;
  */
 public class DockerD {
     static ContainerManager containerManager;
+    public static GUI gui;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
+        
         if (args.length == 0) {
             System.err.println("Usage: DockerD <portnumber>");
             System.exit(0);
         } else {
             cleanContainerNameTags();
+            containerManager = new ContainerManager();
             //            File portFile = new File(args[0]);
 //            if (portFile.exists()) {
 //                ports = ArgParserService.parsePortsFromFile(portFile);
@@ -38,6 +40,7 @@ public class DockerD {
                 public void run() {
                     System.out.println("Cloud Manager interrupted. Shutting down all the containers.");
                     try {
+                        gui.dispose();
                         sleep(2);
                         cleanContainerNameTags();
                     } catch (InterruptedException ex) {
@@ -46,6 +49,7 @@ public class DockerD {
                 }
             });
             ConnectionListener listener = new ConnectionListener(Integer.parseInt(args[0]), new DefaultCommands());
+            gui = new GUI();
             listener.run();
         }
 

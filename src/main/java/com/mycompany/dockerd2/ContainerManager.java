@@ -7,6 +7,7 @@ package com.mycompany.dockerd2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  *
@@ -37,6 +38,8 @@ class ContainerManager {
     public ArrayList getIds(String ip) {
         return clientsIds.get(ip);
     }
-
+    public Set<String> getIds() {
+        return idsContainers.keySet();
+    }
     
 }
