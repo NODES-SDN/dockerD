@@ -15,6 +15,7 @@ import java.util.logging.Logger;
  * @author Lauri Suomalainen
  */
 public class DockerD {
+    static ContainerManager containerManager;
 
     /**
      * @param args the command line arguments
