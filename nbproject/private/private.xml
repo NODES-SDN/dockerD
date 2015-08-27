@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/DefaultCommands.java</file>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/GUI.java</file>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/DockerD.java</file>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/ContainerManager.java</file>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/ContainerCommander.java</file>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/ContainerCommandFactory.java</file>
+            <file>file:/cs/fs2/home/laursuom/NetBeansProjects/dockerD/src/main/java/com/mycompany/dockerd2/ConnectionListener.java</file>
+        </group>
+    </open-files>
+</project-private>
