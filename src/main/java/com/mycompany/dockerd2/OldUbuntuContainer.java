@@ -91,7 +91,7 @@ class OldUbuntuContainer extends Container {
                     }
                 }
             } catch (IOException | IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(OldUbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }

@@ -44,7 +44,7 @@ public class snortContainer extends Container{
             
 
         } catch (IOException | SecurityException ex) {
-            Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(snortContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

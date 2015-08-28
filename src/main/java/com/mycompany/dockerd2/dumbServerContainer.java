@@ -50,7 +50,7 @@ public class dumbServerContainer extends Container {
                 sendContainerInfo();
 
             } catch (IOException | SecurityException ex) {
-                Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(dumbServerContainer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

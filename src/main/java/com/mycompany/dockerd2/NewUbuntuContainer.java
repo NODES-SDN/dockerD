@@ -47,7 +47,7 @@ class NewUbuntuContainer extends Container {
             
 
         } catch (IOException | SecurityException ex) {
-            Logger.getLogger(UbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NewUbuntuContainer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
